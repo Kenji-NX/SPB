@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <VersionPrefix>0.0.4</VersionPrefix>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Authors>marysaka</Authors>
