@@ -19,7 +19,7 @@ namespace SPB.Graphics.Vulkan
 
         private const string VulkanLibraryNameWindows = "vulkan-1.dll";
         private const string VulkanLibraryNameLinux = "libvulkan.so.1";
-        private const string VulkanLibraryNameMacOS = "libMoltenVK.dylib";
+        private const string VulkanLibraryNameMacOS = "libvulkan.1.dylib";
 
         private static string[] _extensions;
 
