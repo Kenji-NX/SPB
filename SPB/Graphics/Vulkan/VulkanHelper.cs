@@ -4,10 +4,9 @@ using SPB.Platform.X11;
 using SPB.Windowing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SPB.Graphics.Vulkan
 {
@@ -119,6 +118,14 @@ namespace SPB.Graphics.Vulkan
                 vulkanHandle = IntPtr.Zero;
 
                 return false;
+            }
+
+            if (OperatingSystem.IsMacOS())
+            {
+                string contentsDir = Path.GetDirectoryName(AppContext.BaseDirectory.TrimEnd('/'))!;
+                string fullPath = Path.Combine(contentsDir, "Frameworks", libraryName);
+
+                return NativeLibrary.TryLoad(fullPath, out vulkanHandle);
             }
 
             return NativeLibrary.TryLoad(libraryName, out vulkanHandle);
