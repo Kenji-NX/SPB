@@ -120,14 +120,6 @@ namespace SPB.Graphics.Vulkan
                 return false;
             }
 
-            if (OperatingSystem.IsMacOS())
-            {
-                string contentsDir = Path.GetDirectoryName(AppContext.BaseDirectory.TrimEnd('/'))!;
-                string fullPath = Path.Combine(contentsDir, "Frameworks", libraryName);
-
-                return NativeLibrary.TryLoad(fullPath, out vulkanHandle);
-            }
-
             return NativeLibrary.TryLoad(libraryName, out vulkanHandle);
         }
 
@@ -227,6 +219,13 @@ namespace SPB.Graphics.Vulkan
             EnsureInit();
 
             return _vkGetInstanceProcAddr(instance, name);
+        }
+
+        public static nint GetProcAddress(string name)
+        {
+            EnsureInit();
+
+            return NativeLibrary.TryGetExport(_vulkanHandle, name, out var addr) ? addr : nint.Zero;
         }
 
         public static string[] GetRequiredInstanceExtensions()
