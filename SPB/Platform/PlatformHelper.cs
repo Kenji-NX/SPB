@@ -37,14 +37,14 @@ namespace SPB.Platform
                     {
                         foreach (string value in values)
                         {
-                            if (NativeLibrary.TryLoad(value, assembly, path, out IntPtr handle))
+                            if (NativeLibrary.TryLoad(value, assembly, path, out nint handle))
                             {
                                 return handle;
                             }
                         }
                     }
 
-                    return IntPtr.Zero;
+                    return nint.Zero;
                 });
 
                 _isResolverRegistered = true;
@@ -58,7 +58,7 @@ namespace SPB.Platform
             {
                 foreach (string value in values)
                 {
-                    if (NativeLibrary.TryLoad(value, out IntPtr handle))
+                    if (NativeLibrary.TryLoad(value, out nint handle))
                     {
                         NativeLibrary.Free(handle);
 
@@ -66,7 +66,7 @@ namespace SPB.Platform
                     }
                 }
             }
-            else if (NativeLibrary.TryLoad(name, out IntPtr handle))
+            else if (NativeLibrary.TryLoad(name, out nint handle))
             {
                 NativeLibrary.Free(handle);
 

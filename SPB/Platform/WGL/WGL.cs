@@ -1,8 +1,7 @@
-using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using HDC = System.IntPtr;
-using HGLRC = System.IntPtr;
+using HDC = nint;
+using HGLRC = nint;
 
 namespace SPB.Platform.WGL
 {
@@ -27,7 +26,7 @@ namespace SPB.Platform.WGL
         public extern static HDC GetCurrentDC();
 
         [DllImport(LibraryName, EntryPoint = "wglGetProcAddress", SetLastError = true, CharSet = CharSet.Ansi)]
-        public extern static IntPtr GetProcAddress(string name);
+        public extern static nint GetProcAddress(string name);
 
         internal sealed class ARB
         {

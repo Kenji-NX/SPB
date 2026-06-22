@@ -1,4 +1,3 @@
-using System;
 using SPB.Graphics;
 
 namespace SPB.Compat
@@ -12,7 +11,7 @@ namespace SPB.Compat
             _bindingContext = bindingsContext;
         }
 
-        public IntPtr GetProcAddress(string procName)
+        public nint GetProcAddress(string procName)
         {
             return _bindingContext.GetProcAddress(procName);
         }

@@ -443,7 +443,7 @@ namespace SPB.Platform.Win32
 
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi)]
-        internal delegate IntPtr WindowProc(IntPtr hWnd, WindowsMessages msg, IntPtr wParam, IntPtr lParam);
+        internal delegate nint WindowProc(nint hWnd, WindowsMessages msg, nint wParam, nint lParam);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         [SupportedOSPlatform("windows")]
@@ -455,15 +455,15 @@ namespace SPB.Platform.Win32
             public WindowProc lpfnWndProc; // not WndProc
             public int cbClsExtra;
             public int cbWndExtra;
-            public IntPtr hInstance;
-            public IntPtr hIcon;
-            public IntPtr hCursor;
-            public IntPtr hbrBackground;
+            public nint hInstance;
+            public nint hIcon;
+            public nint hCursor;
+            public nint hbrBackground;
             [MarshalAs(UnmanagedType.LPWStr)]
             public string lpszMenuName;
             [MarshalAs(UnmanagedType.LPWStr)]
             public string lpszClassName;
-            public IntPtr hIconSm;
+            public nint hIconSm;
 
             public static WNDCLASSEX Create()
             {
@@ -478,13 +478,13 @@ namespace SPB.Platform.Win32
         public static extern ushort RegisterClassEx(ref WNDCLASSEX param);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern short UnregisterClass([MarshalAs(UnmanagedType.LPWStr)] string lpClassName, IntPtr instance);
+        public static extern short UnregisterClass([MarshalAs(UnmanagedType.LPWStr)] string lpClassName, nint instance);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr DefWindowProc(IntPtr hWnd, WindowsMessages msg, IntPtr wParam, IntPtr lParam);
+        public static extern nint DefWindowProc(nint hWnd, WindowsMessages msg, nint wParam, nint lParam);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern IntPtr CreateWindowEx(
+        public static extern nint CreateWindowEx(
            WindowStylesEx dwExStyle,
            string lpClassName,
            string lpWindowName,
@@ -493,42 +493,42 @@ namespace SPB.Platform.Win32
            int y,
            int nWidth,
            int nHeight,
-           IntPtr hWndParent,
-           IntPtr hMenu,
-           IntPtr hInstance,
-           IntPtr lpParam);
+           nint hWndParent,
+           nint hMenu,
+           nint hInstance,
+           nint lpParam);
 
         [DllImport("user32.dll")]
-        public static extern bool ShowWindow(IntPtr hWnd, ShowWindowFlag command);
+        public static extern bool ShowWindow(nint hWnd, ShowWindowFlag command);
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DestroyWindow(IntPtr hwnd);
+        public static extern bool DestroyWindow(nint hwnd);
 
         [DllImport("gdi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SwapBuffers(IntPtr dc);
+        public static extern bool SwapBuffers(nint dc);
 
         [DllImport("kernel32.dll")]
-        public static extern IntPtr GetModuleHandle([MarshalAs(UnmanagedType.LPWStr)] string lpModuleName);
+        public static extern nint GetModuleHandle([MarshalAs(UnmanagedType.LPWStr)] string lpModuleName);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr GetDC(IntPtr hWnd);
+        public static extern nint GetDC(nint hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern void ReleaseDC(IntPtr hWnd, IntPtr dc);
+        public static extern void ReleaseDC(nint hWnd, nint dc);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowLong(IntPtr hWnd, GetWindowLongIndex nIndex);
+        public static extern nint GetWindowLong(nint hWnd, GetWindowLongIndex nIndex);
 
         [DllImport("gdi32.dll")]
-        public static extern int ChoosePixelFormat(IntPtr hdc, ref PixelFormatDescriptor pfd);
+        public static extern int ChoosePixelFormat(nint hdc, ref PixelFormatDescriptor pfd);
 
         [DllImport("gdi32.dll", SetLastError = true)]
-        public static extern int SetPixelFormat(IntPtr hdc, int iPixelFormat, ref PixelFormatDescriptor pfd);
+        public static extern int SetPixelFormat(nint hdc, int iPixelFormat, ref PixelFormatDescriptor pfd);
 
 
         [DllImport("gdi32.dll", SetLastError = true)]
-        public static extern int DescribePixelFormat(IntPtr hdc, int iPixelFormat, int bytes, ref PixelFormatDescriptor pfd);
+        public static extern int DescribePixelFormat(nint hdc, int iPixelFormat, int bytes, ref PixelFormatDescriptor pfd);
     }
 }

@@ -4,6 +4,6 @@ namespace SPB.Graphics
 {
     public interface IBaseContext : IBindingsContext, IDisposable
     {
-        IntPtr ContextHandle { get; }
+        nint ContextHandle { get; }
     }
 }

@@ -1,12 +1,10 @@
-using System;
-
 namespace SPB.Windowing
 {
     public class NativeHandle
     {
-        public IntPtr RawHandle { get; }
+        public nint RawHandle { get; }
 
-        public NativeHandle(IntPtr rawHandle)
+        public NativeHandle(nint rawHandle)
         {
             RawHandle = rawHandle;
         }

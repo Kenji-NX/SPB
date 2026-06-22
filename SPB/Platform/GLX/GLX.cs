@@ -1,9 +1,8 @@
-using System;
 using System.Runtime.InteropServices;
 
-using Display = System.IntPtr;
-using Drawable = System.IntPtr;
-using Context = System.IntPtr;
+using Display = nint;
+using Drawable = nint;
+using Context = nint;
 using System.Runtime.Versioning;
 
 namespace SPB.Platform.GLX
@@ -19,10 +18,10 @@ namespace SPB.Platform.GLX
         }
 
         [DllImport(LibraryName, EntryPoint = "glXChooseFBConfig")]
-        public unsafe extern static IntPtr* ChooseFBConfig(Display display, int screen, int[] attributes, out int fbCount);
+        public unsafe extern static nint* ChooseFBConfig(Display display, int screen, int[] attributes, out int fbCount);
 
         [DllImport(LibraryName, EntryPoint = "glXGetVisualFromFBConfig")]
-        public unsafe extern static X11.X11.XVisualInfo* GetVisualFromFBConfig(Display display, IntPtr fbConfig);
+        public unsafe extern static X11.X11.XVisualInfo* GetVisualFromFBConfig(Display display, nint fbConfig);
 
         [DllImport(LibraryName, EntryPoint = "glXDestroyContext")]
         public static extern void DestroyContext(Display display, Context context);
@@ -203,7 +202,7 @@ namespace SPB.Platform.GLX
             }
 
             [DllImport(LibraryName, EntryPoint = "glXGetProcAddressARB")]
-            public static extern IntPtr GetProcAddress(string procName);
+            public static extern nint GetProcAddress(string procName);
         }
 
         internal sealed class Ext

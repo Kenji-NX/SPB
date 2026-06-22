@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Versioning;
+﻿using System.Runtime.Versioning;
 using System.Runtime.InteropServices;
 
 namespace SPB.Platform.Metal
@@ -9,7 +8,7 @@ namespace SPB.Platform.Metal
     {
         public struct Selector
         {
-            public readonly IntPtr NativePtr;
+            public readonly nint NativePtr;
 
             public unsafe Selector(string value)
             {
@@ -30,9 +29,9 @@ namespace SPB.Platform.Metal
         private const string ObjectiveCRuntimeLibrary = "/usr/lib/libobjc.A.dylib";
 
         [DllImport(ObjectiveCRuntimeLibrary)]
-        public static extern void objc_msgSend(IntPtr receiver, Selector selector, byte value);
+        public static extern void objc_msgSend(nint receiver, Selector selector, byte value);
 
         [DllImport(ObjectiveCRuntimeLibrary)]
-        private static unsafe extern IntPtr sel_registerName(byte* data);
+        private static unsafe extern nint sel_registerName(byte* data);
     }
 }

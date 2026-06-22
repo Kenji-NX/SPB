@@ -14,7 +14,7 @@ namespace SPB.Graphics.Vulkan
     {
         private static bool _isInit = false;
 
-        private static IntPtr _vulkanHandle;
+        private static nint _vulkanHandle;
 
         private const string VulkanLibraryNameWindows = "vulkan-1.dll";
         private const string VulkanLibraryNameLinux = "libvulkan.so.1";
@@ -23,7 +23,7 @@ namespace SPB.Graphics.Vulkan
         private static string[] _extensions;
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi, CharSet = CharSet.Ansi)]
-        private delegate IntPtr vkGetInstanceProcAddrDelegate(IntPtr instance, string name);
+        private delegate nint vkGetInstanceProcAddrDelegate(nint instance, string name);
 
         private static vkGetInstanceProcAddrDelegate _vkGetInstanceProcAddr;
 
@@ -42,52 +42,52 @@ namespace SPB.Graphics.Vulkan
         private unsafe struct VkWin32SurfaceCreateInfoKHR
         {
             public uint StructType;
-            public IntPtr Next;
+            public nint Next;
             public uint Flags;
-            public IntPtr HInstance;
-            public IntPtr Hwnd;
+            public nint HInstance;
+            public nint Hwnd;
         };
 
         private unsafe struct VkXlibSurfaceCreateInfoKHR
         {
             public uint StructType;
-            public IntPtr Next;
+            public nint Next;
             public uint Flags;
-            public IntPtr Display;
-            public IntPtr Window;
+            public nint Display;
+            public nint Window;
         }
 
         private unsafe struct VkXcbSurfaceCreateInfoKHR
         {
             public uint StructType;
-            public IntPtr Next;
+            public nint Next;
             public uint Flags;
-            public IntPtr Connection;
-            public IntPtr Window;
+            public nint Connection;
+            public nint Window;
         }
 
         private unsafe struct VkMacOSSurfaceCreateInfoMVK
         {
             public uint StructType;
-            public IntPtr Next;
+            public nint Next;
             public uint Flags;
-            public IntPtr ViewOrLayer;
+            public nint ViewOrLayer;
         }
 
         private unsafe struct VkMetalSurfaceCreateInfoEXT
         {
             public uint StructType;
-            public IntPtr Next;
+            public nint Next;
             public uint Flags;
-            public IntPtr Layer;
+            public nint Layer;
         }
 
         private unsafe delegate int vkEnumerateInstanceExtensionPropertiesDelegate(string layerName, out uint layerCount, VkExtensionProperty* properties);
-        private unsafe delegate int vkCreateWin32SurfaceKHRDelegate(IntPtr instance, ref VkWin32SurfaceCreateInfoKHR createInfo, IntPtr allocator, out IntPtr surface);
-        private unsafe delegate int vkCreateXlibSurfaceKHRDelegate(IntPtr instance, ref VkXlibSurfaceCreateInfoKHR createInfo, IntPtr allocator, out IntPtr surface);
-        private unsafe delegate int vkCreateXcbSurfaceKHRDelegate(IntPtr instance, ref VkXcbSurfaceCreateInfoKHR createInfo, IntPtr allocator, out IntPtr surface);
-        private unsafe delegate int vkCreateMacOSSurfaceMVKDelegate(IntPtr instance, ref VkMacOSSurfaceCreateInfoMVK createInfo, IntPtr allocator, out IntPtr surface);
-        private unsafe delegate int vkCreateMetalSurfaceEXTDelegate(IntPtr instance, ref VkMetalSurfaceCreateInfoEXT createInfo, IntPtr allocator, out IntPtr surface);
+        private unsafe delegate int vkCreateWin32SurfaceKHRDelegate(nint instance, ref VkWin32SurfaceCreateInfoKHR createInfo, nint allocator, out nint surface);
+        private unsafe delegate int vkCreateXlibSurfaceKHRDelegate(nint instance, ref VkXlibSurfaceCreateInfoKHR createInfo, nint allocator, out nint surface);
+        private unsafe delegate int vkCreateXcbSurfaceKHRDelegate(nint instance, ref VkXcbSurfaceCreateInfoKHR createInfo, nint allocator, out nint surface);
+        private unsafe delegate int vkCreateMacOSSurfaceMVKDelegate(nint instance, ref VkMacOSSurfaceCreateInfoMVK createInfo, nint allocator, out nint surface);
+        private unsafe delegate int vkCreateMetalSurfaceEXTDelegate(nint instance, ref VkMetalSurfaceCreateInfoEXT createInfo, nint allocator, out nint surface);
 
         private static vkEnumerateInstanceExtensionPropertiesDelegate _vkEnumerateInstanceExtensionProperties;
 
@@ -109,13 +109,13 @@ namespace SPB.Graphics.Vulkan
             return null;
         }
 
-        private static bool TryLoadLibrary(out IntPtr vulkanHandle)
+        private static bool TryLoadLibrary(out nint vulkanHandle)
         {
             string libraryName = GetLibraryName();
 
             if (libraryName == null)
             {
-                vulkanHandle = IntPtr.Zero;
+                vulkanHandle = nint.Zero;
 
                 return false;
             }
@@ -148,14 +148,14 @@ namespace SPB.Graphics.Vulkan
         {
             if (!_isInit)
             {
-                if (!TryLoadLibrary(out _vulkanHandle) || !NativeLibrary.TryGetExport(_vulkanHandle, "vkGetInstanceProcAddr", out IntPtr vkGetInstanceProcAddrPtr))
+                if (!TryLoadLibrary(out _vulkanHandle) || !NativeLibrary.TryGetExport(_vulkanHandle, "vkGetInstanceProcAddr", out nint vkGetInstanceProcAddrPtr))
                 {
                     throw new NotSupportedException("Unsupported platform for Vulkan!");
                 }
 
 
                 _vkGetInstanceProcAddr = Marshal.GetDelegateForFunctionPointer<vkGetInstanceProcAddrDelegate>(vkGetInstanceProcAddrPtr);
-                _vkEnumerateInstanceExtensionProperties = Marshal.GetDelegateForFunctionPointer<vkEnumerateInstanceExtensionPropertiesDelegate>(_vkGetInstanceProcAddr(IntPtr.Zero, "vkEnumerateInstanceExtensionProperties"));
+                _vkEnumerateInstanceExtensionProperties = Marshal.GetDelegateForFunctionPointer<vkEnumerateInstanceExtensionPropertiesDelegate>(_vkGetInstanceProcAddr(nint.Zero, "vkEnumerateInstanceExtensionProperties"));
 
                 unsafe
                 {
@@ -222,7 +222,7 @@ namespace SPB.Graphics.Vulkan
             }
         }
 
-        public static IntPtr GetInstanceProcAddr(IntPtr instance, string name)
+        public static nint GetInstanceProcAddr(nint instance, string name)
         {
             EnsureInit();
 
@@ -268,7 +268,7 @@ namespace SPB.Graphics.Vulkan
             return extensions.ToArray();
         }
 
-        public static IntPtr CreateWindowSurface(IntPtr vulkanInstance, NativeWindowBase window)
+        public static nint CreateWindowSurface(nint vulkanInstance, NativeWindowBase window)
         {
             EnsureInit();
 
@@ -279,7 +279,7 @@ namespace SPB.Graphics.Vulkan
                 VkWin32SurfaceCreateInfoKHR creationInfo = new VkWin32SurfaceCreateInfoKHR
                 {
                     StructType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
-                    Next = IntPtr.Zero,
+                    Next = nint.Zero,
                     Flags = 0,
 // Broken warning here there is no platform issues here...
 #pragma warning disable CA1416
@@ -288,7 +288,7 @@ namespace SPB.Graphics.Vulkan
                     Hwnd = window.WindowHandle.RawHandle
                 };
 
-                int res = vkCreateWin32SurfaceKHR(vulkanInstance, ref creationInfo, IntPtr.Zero, out IntPtr surface);
+                int res = vkCreateWin32SurfaceKHR(vulkanInstance, ref creationInfo, nint.Zero, out nint surface);
 
                 if (res != 0)
                 {
@@ -307,13 +307,13 @@ namespace SPB.Graphics.Vulkan
                     VkXcbSurfaceCreateInfoKHR creationInfo = new VkXcbSurfaceCreateInfoKHR
                     {
                         StructType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR,
-                        Next = IntPtr.Zero,
+                        Next = nint.Zero,
                         Flags = 0,
                         Connection = X11.GetXCBConnection(window.DisplayHandle.RawHandle),
                         Window = window.WindowHandle.RawHandle
                     };
 
-                    int res = vkCreateXcbSurfaceKHR(vulkanInstance, ref creationInfo, IntPtr.Zero, out IntPtr surface);
+                    int res = vkCreateXcbSurfaceKHR(vulkanInstance, ref creationInfo, nint.Zero, out nint surface);
 
                     if (res != 0)
                     {
@@ -329,13 +329,13 @@ namespace SPB.Graphics.Vulkan
                     VkXlibSurfaceCreateInfoKHR creationInfo = new VkXlibSurfaceCreateInfoKHR
                     {
                         StructType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
-                        Next = IntPtr.Zero,
+                        Next = nint.Zero,
                         Flags = 0,
                         Display = window.DisplayHandle.RawHandle,
                         Window = window.WindowHandle.RawHandle
                     };
 
-                    int res = vkCreateXlibSurfaceKHR(vulkanInstance, ref creationInfo, IntPtr.Zero, out IntPtr surface);
+                    int res = vkCreateXlibSurfaceKHR(vulkanInstance, ref creationInfo, nint.Zero, out nint surface);
 
                     if (res != 0)
                     {
@@ -355,12 +355,12 @@ namespace SPB.Graphics.Vulkan
                     VkMetalSurfaceCreateInfoEXT creationInfo = new VkMetalSurfaceCreateInfoEXT
                     {
                         StructType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT,
-                        Next = IntPtr.Zero,
+                        Next = nint.Zero,
                         Flags = 0,
                         Layer = window.WindowHandle.RawHandle
                     };
 
-                    int res = vkCreateMetalSurfaceEXT(vulkanInstance, ref creationInfo, IntPtr.Zero, out IntPtr surface);
+                    int res = vkCreateMetalSurfaceEXT(vulkanInstance, ref creationInfo, nint.Zero, out nint surface);
 
                     if (res != 0)
                     {
@@ -376,12 +376,12 @@ namespace SPB.Graphics.Vulkan
                     VkMacOSSurfaceCreateInfoMVK creationInfo = new VkMacOSSurfaceCreateInfoMVK
                     {
                         StructType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK,
-                        Next = IntPtr.Zero,
+                        Next = nint.Zero,
                         Flags = 0,
                         ViewOrLayer = window.WindowHandle.RawHandle
                     };
 
-                    int res = vkCreateMacOSSurfaceMVK(vulkanInstance, ref creationInfo, IntPtr.Zero, out IntPtr surface);
+                    int res = vkCreateMacOSSurfaceMVK(vulkanInstance, ref creationInfo, nint.Zero, out nint surface);
 
                     if (res != 0)
                     {

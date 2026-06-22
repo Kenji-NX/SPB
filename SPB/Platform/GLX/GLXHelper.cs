@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -15,7 +14,7 @@ namespace SPB.Platform.GLX
         private static bool _isInit = false;
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi)]
-        private delegate IntPtr glxCreateContextAttribsARBDelegate(IntPtr display, IntPtr fbConfigs, IntPtr shareContext, bool direct, int[] attributes);
+        private delegate nint glxCreateContextAttribsARBDelegate(nint display, nint fbConfigs, nint shareContext, bool direct, int[] attributes);
 
         private static glxCreateContextAttribsARBDelegate CreateContextAttribsArb;
 
@@ -29,7 +28,7 @@ namespace SPB.Platform.GLX
             }
         }
 
-        public static IntPtr CreateContextAttribs(IntPtr display, IntPtr fbConfigs, IntPtr shareContext, bool direct, int[] attributes)
+        public static nint CreateContextAttribs(nint display, nint fbConfigs, nint shareContext, bool direct, int[] attributes)
         {
             EnsureInit();
 
@@ -115,11 +114,11 @@ namespace SPB.Platform.GLX
             return result;
         }
 
-        public static IntPtr SelectFBConfig(IntPtr display, FramebufferFormat format)
+        public static nint SelectFBConfig(nint display, FramebufferFormat format)
         {
             List<int> visualAttribute = FramebufferFormatToVisualAttribute(format);
 
-            IntPtr result = IntPtr.Zero;
+            nint result = nint.Zero;
 
             // TODO: make screen configurable?
             int screen = DefaultScreenLocked(display);
@@ -127,13 +126,13 @@ namespace SPB.Platform.GLX
             {
                 int fbCount;
 
-                IntPtr* fbConfigs = GLX.ChooseFBConfig(display, screen, visualAttribute.ToArray(), out fbCount);
+                nint* fbConfigs = GLX.ChooseFBConfig(display, screen, visualAttribute.ToArray(), out fbCount);
 
                 if (fbCount > 0 && fbConfigs != null)
                 {
                     result = *fbConfigs;
 
-                    Free((IntPtr)fbConfigs);
+                    Free((nint)fbConfigs);
                 }
             }
 

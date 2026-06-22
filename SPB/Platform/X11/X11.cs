@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using Display = System.IntPtr;
-using Window = System.IntPtr;
+using Display = nint;
+using Window = nint;
 
 namespace SPB.Platform.X11
 {
@@ -15,7 +15,7 @@ namespace SPB.Platform.X11
         public static object Lock = new object();
 
         public static int DefaultScreen { get; private set; }
-        public static IntPtr DefaultDisplay { get; private set; }
+        public static nint DefaultDisplay { get; private set; }
 
         private static XErrorHandler _errorHandlerDelegate = ErrorHandler;
 
@@ -24,9 +24,9 @@ namespace SPB.Platform.X11
 
 
         [DllImport(LibraryName, EntryPoint = "XOpenDisplay")]
-        private extern static IntPtr OpenDisplayLocked(Display display);
+        private extern static nint OpenDisplayLocked(Display display);
 
-        public static IntPtr OpenDisplay(Display display)
+        public static nint OpenDisplay(Display display)
         {
             lock (Lock)
             {
@@ -52,10 +52,10 @@ namespace SPB.Platform.X11
         public extern static Window RootWindow(Display display, int screenNumber);
 
         [DllImport(LibraryName, EntryPoint = "XFree")]
-        public extern static int Free(IntPtr data);
+        public extern static int Free(nint data);
 
         [DllImport(LibraryName, EntryPoint = "XCreateWindow")]
-        public extern static IntPtr CreateWindow(Display display, Window parent, int x, int y, int width, int height, int borderWidth, int depth, int xclass, IntPtr visual, IntPtr valueMask, IntPtr attributes);
+        public extern static nint CreateWindow(Display display, Window parent, int x, int y, int width, int height, int borderWidth, int depth, int xclass, nint visual, nint valueMask, nint attributes);
 
         [DllImport(LibraryName, EntryPoint = "XDestroyWindow")]
         public extern static void DestroyWindow(Display display, Window window);
@@ -67,7 +67,7 @@ namespace SPB.Platform.X11
         public extern static int UnmapWindow(Display display, Window window);
 
         [DllImport(LibraryName, EntryPoint = "XCreateColormap")]
-        public static extern IntPtr CreateColormap(Display display, Window window, IntPtr visual, int alloc);
+        public static extern nint CreateColormap(Display display, Window window, nint visual, int alloc);
 
         public static bool IsXcbAvailable()
         {
@@ -75,7 +75,7 @@ namespace SPB.Platform.X11
         }
 
         [DllImport(XcbLibraryName, EntryPoint = "XGetXCBConnection")]
-        public extern static IntPtr GetXCBConnection(Display display);
+        public extern static nint GetXCBConnection(Display display);
 
         public enum XEventName
         {
@@ -122,8 +122,8 @@ namespace SPB.Platform.X11
         {
             public XReplyCode type;
             public Display display;
-            public IntPtr resourceid;
-            public IntPtr serial;
+            public nint resourceid;
+            public nint serial;
             public byte error_code;
             public XRequest request_code;
             public byte minor_code;
@@ -264,10 +264,10 @@ namespace SPB.Platform.X11
         }
 
         [DllImport(LibraryName, EntryPoint = "XSetErrorHandler")]
-        public extern static IntPtr SetErrorHandler(XErrorHandler error_handler);
+        public extern static nint SetErrorHandler(XErrorHandler error_handler);
 
         [DllImport(LibraryName, EntryPoint = "XGetErrorText", CharSet = CharSet.Unicode)]
-        public extern static int GetErrorText(Display display, int code, IntPtr buffer, int length);
+        public extern static int GetErrorText(Display display, int code, nint buffer, int length);
 
         public enum Gravity
         {
@@ -315,7 +315,7 @@ namespace SPB.Platform.X11
 
         public struct XVisualInfo
         {
-            public IntPtr Visual;
+            public nint Visual;
             public ulong VisualId;
             public int Screen;
             public int Depth;
@@ -329,26 +329,26 @@ namespace SPB.Platform.X11
 
         public struct XSetWindowAttributes
         {
-            public IntPtr BackgroundPixmap;
-            public IntPtr BackgroundPixel;
-            public IntPtr BorderPixmap;
-            public IntPtr BorderPixel;
+            public nint BackgroundPixmap;
+            public nint BackgroundPixel;
+            public nint BorderPixmap;
+            public nint BorderPixel;
             public Gravity BitGravity;
             public Gravity WinGravity;
             public int BackingStore;
-            public IntPtr BackingPlanes;
-            public IntPtr BackingPixel;
+            public nint BackingPlanes;
+            public nint BackingPixel;
             public bool SaveUnder;
-            public IntPtr EventMask;
-            public IntPtr DoNotPropagateMask;
+            public nint EventMask;
+            public nint DoNotPropagateMask;
             public bool OverrideRediection;
-            public IntPtr ColorMap;
-            public IntPtr Cursor;
+            public nint ColorMap;
+            public nint Cursor;
         }
 
         static int ErrorHandler(Display displayHandle, ref XErrorEvent errorEvent)
         {
-            IntPtr buffer = Marshal.AllocHGlobal(256);
+            nint buffer = Marshal.AllocHGlobal(256);
             string error;
             int result = GetErrorText(displayHandle, errorEvent.error_code, buffer, 256);
 
@@ -376,10 +376,10 @@ namespace SPB.Platform.X11
 
             SetErrorHandler(_errorHandlerDelegate);
 
-            DefaultDisplay = OpenDisplay(IntPtr.Zero);
+            DefaultDisplay = OpenDisplay(nint.Zero);
             DefaultScreen = 0;
 
-            if (DefaultDisplay == IntPtr.Zero)
+            if (DefaultDisplay == nint.Zero)
             {
                 throw new Exception("Cannot connect to X server!");
             }

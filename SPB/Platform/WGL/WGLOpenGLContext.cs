@@ -11,45 +11,45 @@ namespace SPB.Platform.WGL
     [SupportedOSPlatform("windows")]
     public class WGLOpenGLContext : OpenGLContextBase
     {
-        private IntPtr _windowHandle;
-        private IntPtr _deviceContext;
+        private nint _windowHandle;
+        private nint _deviceContext;
 
         private NativeWindowBase _window;
 
         public WGLOpenGLContext(FramebufferFormat framebufferFormat, int major, int minor, OpenGLContextFlags flags = OpenGLContextFlags.Default, bool directRendering = true, WGLOpenGLContext shareContext = null) : base(framebufferFormat, major, minor, flags, directRendering, shareContext)
         {
-            _deviceContext = IntPtr.Zero;
+            _deviceContext = nint.Zero;
             _window = null;
         }
 
         public override bool IsCurrent => WGL.GetCurrentContext() == ContextHandle;
 
-        public override IntPtr GetProcAddress(string procName)
+        public override nint GetProcAddress(string procName)
         {
             return WGLHelper.GetProcAddress(procName);
         }
 
         public override void Initialize(NativeWindowBase window = null)
         {
-            IntPtr windowHandle = IntPtr.Zero;
+            nint windowHandle = nint.Zero;
 
             if (window != null)
             {
                 windowHandle = window.WindowHandle.RawHandle;
             }
 
-            IntPtr sharedContextHandle = IntPtr.Zero;
+            nint sharedContextHandle = nint.Zero;
 
             if (ShareContext != null)
             {
                 sharedContextHandle = ShareContext.ContextHandle;
             }
 
-            IntPtr context = WGLHelper.CreateContext(ref windowHandle, FramebufferFormat, Major, Minor, Flags, DirectRendering, sharedContextHandle);
+            nint context = WGLHelper.CreateContext(ref windowHandle, FramebufferFormat, Major, Minor, Flags, DirectRendering, sharedContextHandle);
 
             ContextHandle = context;
 
-            if (ContextHandle != IntPtr.Zero)
+            if (ContextHandle != nint.Zero)
             {
                 // If there is no window provided, keep the temporary window around to free it later.
                 if (window == null)
@@ -64,7 +64,7 @@ namespace SPB.Platform.WGL
                 }
             }
 
-            if (ContextHandle == IntPtr.Zero)
+            if (ContextHandle == nint.Zero)
             {
                 throw new ContextException("CreateContext() failed.");
             }
@@ -94,13 +94,13 @@ namespace SPB.Platform.WGL
             }
             else
             {
-                if (WGL.GetCurrentContext() == IntPtr.Zero)
+                if (WGL.GetCurrentContext() == nint.Zero)
                 {
                     success = true;
                 }
                 else
                 {
-                    success = WGL.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
+                    success = WGL.MakeCurrent(nint.Zero, nint.Zero);
                 }
             }
 
@@ -122,7 +122,7 @@ namespace SPB.Platform.WGL
                 {
                     MakeCurrent(null);
 
-                    if (_windowHandle != IntPtr.Zero)
+                    if (_windowHandle != nint.Zero)
                     {
                         Win32.Win32.ReleaseDC(_windowHandle, _deviceContext);
                         Win32.Win32.DestroyWindow(_windowHandle);

@@ -1,9 +1,7 @@
-using System;
-
 namespace SPB.Graphics
 {
     public interface IBindingsContext
     {
-        IntPtr GetProcAddress(string procName);
+        nint GetProcAddress(string procName);
     }
 }

@@ -11,13 +11,13 @@ namespace SPB.Platform.X11
     {
         public static GLXWindow CreateGLXWindow(NativeHandle display, FramebufferFormat format, int x, int y, int width, int height)
         {
-            IntPtr fbConfig = GLXHelper.SelectFBConfig(display.RawHandle, format);
+            nint fbConfig = GLXHelper.SelectFBConfig(display.RawHandle, format);
 
             unsafe
             {
                 X11.XVisualInfo* visualInfo;
 
-                if (fbConfig != IntPtr.Zero)
+                if (fbConfig != nint.Zero)
                 {
                     visualInfo = GLX.GLX.GetVisualFromFBConfig(display.RawHandle, fbConfig);
                 }
@@ -36,12 +36,12 @@ namespace SPB.Platform.X11
                 // make screen configurable?
                 int screen = X11.DefaultScreenLocked(display.RawHandle);
 
-                IntPtr rootWindow = X11.RootWindow(display.RawHandle, screen);
+                nint rootWindow = X11.RootWindow(display.RawHandle, screen);
 
                 X11.XSetWindowAttributes attributes = new X11.XSetWindowAttributes
                 {
-                    BackgroundPixel = IntPtr.Zero,
-                    BorderPixel = IntPtr.Zero,
+                    BackgroundPixel = nint.Zero,
+                    BorderPixel = nint.Zero,
                     ColorMap = X11.CreateColormap(display.RawHandle, rootWindow, visualInfo->Visual, 0)
                 };
                 // TODO: events
@@ -50,9 +50,9 @@ namespace SPB.Platform.X11
 
                 X11.XSetWindowAttributes* attributesPtr = &attributes;
 
-                IntPtr rawWindowHandle = X11.CreateWindow(display.RawHandle, rootWindow, x, y, width, height, 0, visualInfo->Depth, (int)X11.CreateWindowArgs.InputOutput, visualInfo->Visual, (IntPtr)windowValueMask, (IntPtr)attributesPtr);
+                nint rawWindowHandle = X11.CreateWindow(display.RawHandle, rootWindow, x, y, width, height, 0, visualInfo->Depth, (int)X11.CreateWindowArgs.InputOutput, visualInfo->Visual, (nint)windowValueMask, (nint)attributesPtr);
 
-                if (rawWindowHandle == IntPtr.Zero)
+                if (rawWindowHandle == nint.Zero)
                 {
                     throw new ApplicationException("Cannot create X window!");
                 }

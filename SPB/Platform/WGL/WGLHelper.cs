@@ -17,28 +17,28 @@ namespace SPB.Platform.WGL
     {
         private static bool _isInit = false;
 
-        private static IntPtr _opengl32Handle;
+        private static nint _opengl32Handle;
 
         private static string[] Extensions;
 
-        private delegate IntPtr wglGetExtensionsStringARB(IntPtr hdc);
-        private delegate IntPtr wglGetExtensionsStringEXT();
+        private delegate nint wglGetExtensionsStringARB(nint hdc);
+        private delegate nint wglGetExtensionsStringEXT();
 
         private static wglGetExtensionsStringEXT GetExtensionsStringEXT;
         private static wglGetExtensionsStringARB GetExtensionsStringARB;
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true)]
-        private delegate bool wglChoosePixelFormatARBDelegate(IntPtr hdc, int[] piAttribIList, float[] pfAttribFList, int nMaxFormats, int[] piFormats, out int nNumFormats);
+        private delegate bool wglChoosePixelFormatARBDelegate(nint hdc, int[] piAttribIList, float[] pfAttribFList, int nMaxFormats, int[] piFormats, out int nNumFormats);
 
         private static wglChoosePixelFormatARBDelegate ChoosePixelFormatArb;
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true)]
-        private delegate bool wglGetPixelFormatAttribivARB(IntPtr hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, int[] piAttributes, int[] values);
+        private delegate bool wglGetPixelFormatAttribivARB(nint hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, int[] piAttributes, int[] values);
 
         private static wglGetPixelFormatAttribivARB GetPixelFormatAttribivARB;
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true)]
-        private delegate IntPtr wglCreateContextAttribsARBDelegate(IntPtr hDC, IntPtr hShareContext, int[] attribList);
+        private delegate nint wglCreateContextAttribsARBDelegate(nint hDC, nint hShareContext, int[] attribList);
 
         private static wglCreateContextAttribsARBDelegate CreateContextAttribsArb;
 
@@ -53,7 +53,7 @@ namespace SPB.Platform.WGL
 
         private static string GetExtensionsString()
         {
-            IntPtr stringPtr;
+            nint stringPtr;
 
             if (GetExtensionsStringARB != null)
             {
@@ -67,11 +67,11 @@ namespace SPB.Platform.WGL
             return Marshal.PtrToStringAnsi(stringPtr);
         }
 
-        public static IntPtr GetProcAddress(string procName)
+        public static nint GetProcAddress(string procName)
         {
-            IntPtr result = WGL.GetProcAddress(procName);
+            nint result = WGL.GetProcAddress(procName);
 
-            if (result == IntPtr.Zero)
+            if (result == nint.Zero)
             {
                 NativeLibrary.TryGetExport(_opengl32Handle, procName, out result);
             }
@@ -93,12 +93,12 @@ namespace SPB.Platform.WGL
             {
                 // Because WGL is terrible, we need to first create a context that will allow us to check extensions and query functions to create our contexes.
 
-                IntPtr dummyWindow = Win32Helper.CreateNativeWindow(WindowStylesEx.WS_EX_OVERLAPPEDWINDOW,
+                nint dummyWindow = Win32Helper.CreateNativeWindow(WindowStylesEx.WS_EX_OVERLAPPEDWINDOW,
                                WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN,
                                "SPB intermediary context",
                                0, 0, 1, 1);
 
-                if (dummyWindow == IntPtr.Zero)
+                if (dummyWindow == nint.Zero)
                 {
                     throw new PlatformException($"CreateWindowEx failed: {Marshal.GetLastWin32Error()}");
                 }
@@ -106,7 +106,7 @@ namespace SPB.Platform.WGL
                 // Enforce hidden (this is a hack around possible ShowWindow being ignored when started with a STARTUPINFO)
                 ShowWindow(dummyWindow, ShowWindowFlag.SW_HIDE);
 
-                IntPtr dummyWindowDC = GetDC(dummyWindow);
+                nint dummyWindowDC = GetDC(dummyWindow);
 
                 PixelFormatDescriptor pfd = PixelFormatDescriptor.Create();
 
@@ -123,15 +123,15 @@ namespace SPB.Platform.WGL
                     throw new PlatformException($"SetPixelFormat failed for dummy context: {Marshal.GetLastWin32Error()}");
                 }
 
-                IntPtr dummyContext = WGL.CreateContext(dummyWindowDC);
+                nint dummyContext = WGL.CreateContext(dummyWindowDC);
 
-                if (dummyContext == IntPtr.Zero)
+                if (dummyContext == nint.Zero)
                 {
                     throw new PlatformException($"WGL.CreateContext failed for dummy context: {Marshal.GetLastWin32Error()}");
                 }
 
-                IntPtr oldDC = WGL.GetCurrentDC();
-                IntPtr oldContext = WGL.GetCurrentContext();
+                nint oldDC = WGL.GetCurrentDC();
+                nint oldContext = WGL.GetCurrentContext();
 
                 if (!WGL.MakeCurrent(dummyWindowDC, dummyContext))
                 {
@@ -258,7 +258,7 @@ namespace SPB.Platform.WGL
             }
         }
 
-        private static int FindPerfectFormat(IntPtr dcHandle, FramebufferFormat format)
+        private static int FindPerfectFormat(nint dcHandle, FramebufferFormat format)
         {
             List<int> attributes = FramebufferFormatToPixelFormatAttributes(format);
 
@@ -277,7 +277,7 @@ namespace SPB.Platform.WGL
             return formats[0];
         }
 
-        private static int FindClosestFormat(IntPtr dcHandle, FramebufferFormat format)
+        private static int FindClosestFormat(nint dcHandle, FramebufferFormat format)
         {
             const int WGL_NO_ACCELERATION_ARB = 0x2025;
 
@@ -502,11 +502,11 @@ namespace SPB.Platform.WGL
             return result;
         }
 
-        public static IntPtr CreateContext(ref IntPtr windowHandle, FramebufferFormat framebufferFormat, int major, int minor, OpenGLContextFlags flags, bool directRendering, IntPtr shareContext)
+        public static nint CreateContext(ref nint windowHandle, FramebufferFormat framebufferFormat, int major, int minor, OpenGLContextFlags flags, bool directRendering, nint shareContext)
         {
             EnsureInit();
 
-            bool hasTempWindow = windowHandle == IntPtr.Zero;
+            bool hasTempWindow = windowHandle == nint.Zero;
 
             if (hasTempWindow)
             {
@@ -516,7 +516,7 @@ namespace SPB.Platform.WGL
                                0, 0, 1, 1);
             }
 
-            IntPtr dcHandle = GetDC(windowHandle);
+            nint dcHandle = GetDC(windowHandle);
 
             int pixelFormat = FindPerfectFormat(dcHandle, framebufferFormat);
 
@@ -549,7 +549,7 @@ namespace SPB.Platform.WGL
 
             List<int> contextAttributes = GetContextCreationARBAttribute(major, minor, flags);
 
-            IntPtr context = CreateContextAttribsArb(dcHandle, shareContext, contextAttributes.ToArray());
+            nint context = CreateContextAttribsArb(dcHandle, shareContext, contextAttributes.ToArray());
 
             ReleaseDC(windowHandle, dcHandle);
 
