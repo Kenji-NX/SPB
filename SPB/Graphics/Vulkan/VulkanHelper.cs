@@ -18,7 +18,8 @@ namespace SPB.Graphics.Vulkan
 
         private const string VulkanLibraryNameWindows = "vulkan-1.dll";
         private const string VulkanLibraryNameLinux = "libvulkan.so.1";
-        private const string VulkanLibraryNameMacOS = "libvulkan.1.dylib";
+        private const string VulkanLibraryNameMacOSMVK = "libMoltenVK.dylib";
+        private const string VulkanLibraryNameMacOSKK = "libvulkan.1.dylib";
 
         private static string[] _extensions;
 
@@ -101,9 +102,13 @@ namespace SPB.Graphics.Vulkan
             {
                 return VulkanLibraryNameLinux;
             }
-            else if (OperatingSystem.IsMacOS())
+            else if (OperatingSystem.IsMacOS() && Environment.GetEnvironmentVariable("VK_DRIVER_FILES")!.Contains("MoltenVK"))
             {
-                return VulkanLibraryNameMacOS;
+                return VulkanLibraryNameMacOSMVK;
+            }
+            else if (OperatingSystem.IsMacOS() && Environment.GetEnvironmentVariable("VK_DRIVER_FILES")!.Contains("kosmickrisp"))
+            {
+                return VulkanLibraryNameMacOSKK;
             }
 
             return null;
